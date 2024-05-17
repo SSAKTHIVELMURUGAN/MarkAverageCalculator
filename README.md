@@ -13,7 +13,6 @@ This project provides a web-based Mark Average Calculator that calculates the to
 
 - AWS Account
 - AWS CLI installed and configured
-- Terraform installed
 
 ## AWS Features Used
 
@@ -46,11 +45,4 @@ Amazon CloudWatch is used for monitoring and logging.
 
 - **Feature**: Monitoring and observability service.
 - **Usage**: Logs the execution details of the Lambda function.
-
-### 6. AWS CLI and Terraform
-AWS Command Line Interface (CLI) and Terraform are used to deploy and manage the AWS infrastructure.
-
-- **Feature**: Infrastructure as Code (IaC) and command-line management.
-- **Usage**: Deploys the necessary AWS resources using Terraform scripts.
-
 

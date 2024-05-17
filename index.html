@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Average Calculator</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px auto;
+            width: 50%;
+        }
+
+        .container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #337ab7;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        #results {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mark Average Calculator</h1>
+        <div class="input-section">
+            <label for="numSubjects">Number of Subjects:</label>
+            <input type="number" id="numSubjects" min="1" required>
+            <button type="button" onclick="generateInputs()">Generate Input Fields</button>
+        </div>
+        <form action="#" id="markForm">
+            <div id="subjectInputs"></div>
+            <button type="button" onclick="calculateAverage()">Calculate Average & Percentage</button>
+        </form>
+        <div id="results"></div>
+    </div>
+    <script>
+        function generateInputs() {
+            const numSubjects = document.getElementById("numSubjects").value;
+            const subjectInputs = document.getElementById("subjectInputs");
+            subjectInputs.innerHTML = "";
+
+            for (let i = 1; i <= numSubjects; i++) {
+                const subjectLabel = document.createElement("label");
+                subjectLabel.textContent = `Subject ${i}:`;
+                subjectInputs.appendChild(subjectLabel);
+
+                const subjectInput = document.createElement("input");
+                subjectInput.type = "number";
+                subjectInput.id = `subjectMark${i}`;
+                subjectInput.min = 0;
+                subjectInput.required = true;
+                subjectInputs.appendChild(subjectInput);
+
+                const br = document.createElement("br");
+                subjectInputs.appendChild(br);
+            }
+        }
+
+        function calculateAverage() {
+            const numSubjects = document.getElementById("numSubjects").value;
+            const subjectMarks = [];
+            for (let i = 1; i <= numSubjects; i++) {
+                const mark = document.getElementById(`subjectMark${i}`).value;
+                subjectMarks.push(parseFloat(mark));
+            }
+
+            // Calculate total, average, and percentage
+            const total = subjectMarks.reduce((acc, mark) => acc + mark, 0);
+            const average = total / numSubjects;
+            const percentage = (average / 100) * 100;
+
+            // Display the results
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = `
+                <p>Total Marks: ${total}</p>
+                <p>Average: ${average.toFixed(2)}</p>
+                <p>Percentage: ${percentage.toFixed(2)}%</p>
+            `;
+
+            // Send data to Lambda function for storage
+            sendDataToLambda(subjectMarks, total, average, percentage);
+        }
+
+        function sendDataToLambda(subjectMarks, total, average, percentage) {
+            const apiEndpoint = 'API_GATEWAY_ENDPOINT'; // Replace with your API Gateway endpoint
+
+            fetch(apiEndpoint, {
+                method: 'POST',
+                body: JSON.stringify({
+                    subjectMarks: subjectMarks,
+                    total: total,
+                    average: average,
+                    percentage: percentage
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data stored successfully in DynamoDB:', data);
+            })
+            .catch(error => {
+                console.error('Error storing data in DynamoDB:', error);
+            });
+        }
+    </script>
+</body>
+</html>

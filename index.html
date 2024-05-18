@@ -108,33 +108,6 @@
                 <p>Average: ${average.toFixed(2)}</p>
                 <p>Percentage: ${percentage.toFixed(2)}%</p>
             `;
-
-            // Send data to Lambda function for storage
-            sendDataToLambda(subjectMarks, total, average, percentage);
-        }
-
-        function sendDataToLambda(subjectMarks, total, average, percentage) {
-            const apiEndpoint = 'API_GATEWAY_ENDPOINT'; // Replace with your API Gateway endpoint
-
-            fetch(apiEndpoint, {
-                method: 'POST',
-                body: JSON.stringify({
-                    subjectMarks: subjectMarks,
-                    total: total,
-                    average: average,
-                    percentage: percentage
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Data stored successfully in DynamoDB:', data);
-            })
-            .catch(error => {
-                console.error('Error storing data in DynamoDB:', error);
-            });
         }
     </script>
 </body>
